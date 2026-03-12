@@ -690,8 +690,12 @@ export async function receivePurchaseOrderLine(formData: FormData) {
       },
     });
 
-    const isFullyReceived = refreshedLines.every((entry) => entry.receivedQuantity >= entry.orderedQuantity);
-    const hasAnyReceived = refreshedLines.some((entry) => entry.receivedQuantity > 0);
+    const isFullyReceived = refreshedLines.every(
+      (entry: { orderedQuantity: number; receivedQuantity: number }) => entry.receivedQuantity >= entry.orderedQuantity,
+    );
+    const hasAnyReceived = refreshedLines.some(
+      (entry: { orderedQuantity: number; receivedQuantity: number }) => entry.receivedQuantity > 0,
+    );
 
     await tx.purchaseOrder.update({
       where: { id: purchaseOrderId },
