@@ -1,6 +1,5 @@
 "use server";
 
-import type { Prisma } from "@prisma/client";
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import { prisma } from "@/lib/prisma";
@@ -14,6 +13,11 @@ import {
   verifyPassword,
 } from "@/lib/auth";
 import { canHandleDeliveries, canManageOrders, canManageShop } from "@/lib/authorization";
+
+type TransactionClient = Omit<
+  typeof prisma,
+  "$connect" | "$disconnect" | "$on" | "$transaction" | "$extends"
+>;
 
 function slugify(input: string) {
   return input
@@ -65,7 +69,7 @@ export async function createShop(formData: FormData) {
   const slug = await ensureUniqueSlug(slugify(name));
   const ownerPasswordHash = createPasswordHash(ownerPassword);
 
-  const shop = await prisma.$transaction(async (tx: Prisma.TransactionClient) => {
+  const shop = await prisma.$transaction(async (tx: TransactionClient) => {
     const createdShop = await tx.shop.create({
       data: {
         slug,
@@ -474,7 +478,7 @@ export async function receiveInventory(formData: FormData) {
     throw new Error("Quantity must be greater than zero.");
   }
 
-  await prisma.$transaction(async (tx: Prisma.TransactionClient) => {
+  await prisma.$transaction(async (tx: TransactionClient) => {
     await tx.inventoryItem.update({
       where: { id: itemId },
       data: {
@@ -524,7 +528,7 @@ export async function logInventoryAdjustment(formData: FormData) {
 
   const signedQuantity = type === "WASTE" ? -Math.abs(quantity) : quantity;
 
-  await prisma.$transaction(async (tx: Prisma.TransactionClient) => {
+  await prisma.$transaction(async (tx: TransactionClient) => {
     await tx.inventoryItem.update({
       where: { id: itemId },
       data: {
@@ -622,7 +626,7 @@ export async function receivePurchaseOrderLine(formData: FormData) {
     throw new Error("Received quantity must be greater than zero.");
   }
 
-  await prisma.$transaction(async (tx: Prisma.TransactionClient) => {
+  await prisma.$transaction(async (tx: TransactionClient) => {
     const line = await tx.purchaseOrderLine.findUnique({
       where: { id: purchaseOrderLineId },
       include: {
