@@ -18,6 +18,12 @@ type TransactionClient = Omit<
   typeof prisma,
   "$connect" | "$disconnect" | "$on" | "$transaction" | "$extends"
 >;
+type ShopAccess = Awaited<ReturnType<typeof requireShopAccess>>;
+type ShopMembership = ShopAccess["user"]["memberships"][number];
+
+function getMembershipForShop(access: ShopAccess, shopSlug: string) {
+  return access.user.memberships.find((entry: ShopMembership) => entry.shop.slug === shopSlug) ?? null;
+}
 
 function slugify(input: string) {
   return input
@@ -167,7 +173,7 @@ export async function updateOrderStatus(formData: FormData) {
   const orderNumber = String(formData.get("orderNumber") ?? "");
   const status = String(formData.get("status") ?? "");
   const access = await requireShopAccess(shopSlug);
-  const membership = access.user.memberships.find((entry) => entry.shop.slug === shopSlug) ?? null;
+  const membership = getMembershipForShop(access, shopSlug);
 
   if (!canManageOrders(access.user.platformRole, membership?.role)) {
     throw new Error("You do not have permission to update order status.");
@@ -208,7 +214,7 @@ export async function assignOrderDesigner(formData: FormData) {
   const orderNumber = String(formData.get("orderNumber") ?? "");
   const designerId = String(formData.get("designerId") ?? "");
   const access = await requireShopAccess(shopSlug);
-  const membership = access.user.memberships.find((entry) => entry.shop.slug === shopSlug) ?? null;
+  const membership = getMembershipForShop(access, shopSlug);
 
   if (!canManageOrders(access.user.platformRole, membership?.role)) {
     throw new Error("You do not have permission to assign designers.");
@@ -251,7 +257,7 @@ export async function markDeliveryItemChecked(formData: FormData) {
   const orderNumber = String(formData.get("orderNumber") ?? "");
   const orderItemId = String(formData.get("orderItemId") ?? "");
   const access = await requireShopAccess(shopSlug);
-  const membership = access.user.memberships.find((entry) => entry.shop.slug === shopSlug) ?? null;
+  const membership = getMembershipForShop(access, shopSlug);
 
   if (!canHandleDeliveries(access.user.platformRole, membership?.role)) {
     throw new Error("You do not have permission to handle delivery checks.");
@@ -299,7 +305,7 @@ export async function updateCustomerNotes(formData: FormData) {
   const customerId = String(formData.get("customerId") ?? "");
   const notes = String(formData.get("notes") ?? "");
   const access = await requireShopAccess(shopSlug);
-  const membership = access.user.memberships.find((entry) => entry.shop.slug === shopSlug) ?? null;
+  const membership = getMembershipForShop(access, shopSlug);
 
   if (!canManageOrders(access.user.platformRole, membership?.role)) {
     throw new Error("You do not have permission to update customer notes.");
@@ -320,7 +326,7 @@ export async function updateOrderNotes(formData: FormData) {
   const notes = String(formData.get("notes") ?? "");
   const internalSummary = String(formData.get("internalSummary") ?? "");
   const access = await requireShopAccess(shopSlug);
-  const membership = access.user.memberships.find((entry) => entry.shop.slug === shopSlug) ?? null;
+  const membership = getMembershipForShop(access, shopSlug);
 
   if (!canManageOrders(access.user.platformRole, membership?.role)) {
     throw new Error("You do not have permission to update order notes.");
@@ -348,7 +354,7 @@ export async function addOrderPhoto(formData: FormData) {
   const caption = String(formData.get("caption") ?? "").trim();
   const kind = String(formData.get("kind") ?? "ARRANGEMENT");
   const access = await requireShopAccess(shopSlug);
-  const membership = access.user.memberships.find((entry) => entry.shop.slug === shopSlug) ?? null;
+  const membership = getMembershipForShop(access, shopSlug);
 
   if (!canManageOrders(access.user.platformRole, membership?.role)) {
     throw new Error("You do not have permission to attach photos.");
@@ -382,7 +388,7 @@ export async function clockInStaff(formData: FormData) {
   const shopSlug = String(formData.get("shopSlug") ?? "");
   const staffMemberId = String(formData.get("staffMemberId") ?? "");
   const access = await requireShopAccess(shopSlug);
-  const membership = access.user.memberships.find((entry) => entry.shop.slug === shopSlug) ?? null;
+  const membership = getMembershipForShop(access, shopSlug);
 
   if (!canManageOrders(access.user.platformRole, membership?.role)) {
     throw new Error("You do not have permission to clock in staff.");
@@ -419,7 +425,7 @@ export async function clockOutStaff(formData: FormData) {
   const shopSlug = String(formData.get("shopSlug") ?? "");
   const timeEntryId = String(formData.get("timeEntryId") ?? "");
   const access = await requireShopAccess(shopSlug);
-  const membership = access.user.memberships.find((entry) => entry.shop.slug === shopSlug) ?? null;
+  const membership = getMembershipForShop(access, shopSlug);
 
   if (!canManageOrders(access.user.platformRole, membership?.role)) {
     throw new Error("You do not have permission to clock out staff.");
@@ -443,7 +449,7 @@ export async function resolveTimeEntryOverride(formData: FormData) {
   const endedAt = String(formData.get("endedAt") ?? "");
   const overrideReason = String(formData.get("overrideReason") ?? "").trim();
   const access = await requireShopAccess(shopSlug);
-  const membership = access.user.memberships.find((entry) => entry.shop.slug === shopSlug) ?? null;
+  const membership = getMembershipForShop(access, shopSlug);
 
   if (!membership || !["OWNER", "MANAGER"].includes(membership.role) && access.user.platformRole !== "PLATFORM_ADMIN") {
     throw new Error("You do not have permission to resolve time clock exceptions.");
@@ -468,7 +474,7 @@ export async function receiveInventory(formData: FormData) {
   const note = String(formData.get("note") ?? "").trim();
   const freshnessNote = String(formData.get("freshnessNote") ?? "").trim();
   const access = await requireShopAccess(shopSlug);
-  const membership = access.user.memberships.find((entry) => entry.shop.slug === shopSlug) ?? null;
+  const membership = getMembershipForShop(access, shopSlug);
 
   if (!canManageShop(access.user.platformRole, membership?.role)) {
     throw new Error("You do not have permission to receive inventory.");
@@ -516,7 +522,7 @@ export async function logInventoryAdjustment(formData: FormData) {
   const type = String(formData.get("type") ?? "MANUAL_ADJUSTMENT");
   const note = String(formData.get("note") ?? "").trim();
   const access = await requireShopAccess(shopSlug);
-  const membership = access.user.memberships.find((entry) => entry.shop.slug === shopSlug) ?? null;
+  const membership = getMembershipForShop(access, shopSlug);
 
   if (!canManageShop(access.user.platformRole, membership?.role)) {
     throw new Error("You do not have permission to log inventory changes.");
@@ -568,7 +574,7 @@ export async function createPurchaseOrder(formData: FormData) {
   const orderedQuantity = Number(formData.get("orderedQuantity") ?? 0);
   const unitCostCents = Number(formData.get("unitCostCents") ?? 0);
   const access = await requireShopAccess(shopSlug);
-  const membership = access.user.memberships.find((entry) => entry.shop.slug === shopSlug) ?? null;
+  const membership = getMembershipForShop(access, shopSlug);
 
   if (!canManageShop(access.user.platformRole, membership?.role)) {
     throw new Error("You do not have permission to create purchase orders.");
@@ -616,7 +622,7 @@ export async function receivePurchaseOrderLine(formData: FormData) {
   const receivedQuantity = Number(formData.get("receivedQuantity") ?? 0);
   const note = String(formData.get("note") ?? "").trim();
   const access = await requireShopAccess(shopSlug);
-  const membership = access.user.memberships.find((entry) => entry.shop.slug === shopSlug) ?? null;
+  const membership = getMembershipForShop(access, shopSlug);
 
   if (!canManageShop(access.user.platformRole, membership?.role)) {
     throw new Error("You do not have permission to receive purchase order items.");
@@ -714,7 +720,7 @@ export async function createProposal(formData: FormData) {
   const lineQuantity = Number(formData.get("lineQuantity") ?? 0);
   const lineUnitPrice = Number(formData.get("lineUnitPrice") ?? 0);
   const access = await requireShopAccess(shopSlug);
-  const membership = access.user.memberships.find((entry) => entry.shop.slug === shopSlug) ?? null;
+  const membership = getMembershipForShop(access, shopSlug);
 
   if (!canManageShop(access.user.platformRole, membership?.role)) {
     throw new Error("You do not have permission to create proposals.");
