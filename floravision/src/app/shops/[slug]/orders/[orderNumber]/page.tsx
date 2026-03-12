@@ -25,6 +25,7 @@ type OrderDetail = NonNullable<Awaited<ReturnType<typeof getOrderDetail>>>;
 type AssignableStaffMember = OrderDetail["shop"]["staffMembers"][number];
 type OrderItem = OrderDetail["items"][number];
 type CustomerPhoto = OrderDetail["customer"]["photos"][number];
+type DeliveryCheck = NonNullable<OrderDetail["delivery"]>["checks"][number];
 
 function formatMoney(cents: number | null | undefined) {
   return new Intl.NumberFormat("en-US", {
@@ -87,7 +88,7 @@ export default async function OrderDetailPage({ params }: PageProps) {
     notFound();
   }
 
-  const checkedItemIds = new Set(order.delivery?.checks.map((check) => check.orderItemId) ?? []);
+  const checkedItemIds = new Set(order.delivery?.checks.map((check: DeliveryCheck) => check.orderItemId) ?? []);
   const missingItems = order.items.filter((item) => item.requiresScan && !checkedItemIds.has(item.id));
   const membership = getMembershipForShop(access, slug);
   const role = membership?.role;
