@@ -1,0 +1,459 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+enum StaffRole {
+  OWNER
+  MANAGER
+  DESIGNER
+  DRIVER
+  SALES
+}
+
+enum OrderStatus {
+  DRAFT
+  CONFIRMED
+  DESIGNING
+  READY_FOR_PICKUP
+  OUT_FOR_DELIVERY
+  COMPLETED
+  CANCELLED
+}
+
+enum FulfillmentType {
+  PICKUP
+  DELIVERY
+  EVENT
+}
+
+enum ProductType {
+  ARRANGEMENT
+  ADD_ON
+  HARD_GOOD
+  SERVICE
+}
+
+enum PhotoKind {
+  ARRANGEMENT
+  COMPONENT_PROOF
+  DELIVERY_PROOF
+}
+
+enum DeliveryStatus {
+  PENDING
+  LOADED
+  EN_ROUTE
+  DELIVERED
+  ATTEMPTED
+  EXCEPTION
+}
+
+enum DeliveryHandoffType {
+  RECIPIENT
+  DOOR
+  FUNERAL_FLOWER_ROOM
+  HOSPITAL_FRONT_DESK
+  APARTMENT_FRONT_DESK
+  NEIGHBOR
+  OTHER
+}
+
+enum InventoryUnit {
+  STEM
+  BUNCH
+  BUCKET
+  EACH
+}
+
+enum InventoryMovementType {
+  RECEIPT
+  DESIGN_USE
+  SUBSTITUTION_OUT
+  SUBSTITUTION_IN
+  WASTE
+  MANUAL_ADJUSTMENT
+  TRANSFER_IN
+  TRANSFER_OUT
+}
+
+enum PurchaseOrderStatus {
+  DRAFT
+  ORDERED
+  PARTIALLY_RECEIVED
+  RECEIVED
+  CANCELLED
+}
+
+enum ProposalType {
+  WEDDING
+  FUNERAL
+  PARTY
+  CORPORATE
+  OTHER
+}
+
+enum ProposalStatus {
+  DRAFT
+  SENT
+  APPROVED
+  DECLINED
+}
+
+enum PlatformRole {
+  PLATFORM_ADMIN
+  USER
+}
+
+enum MembershipRole {
+  OWNER
+  MANAGER
+  DESIGNER
+  DRIVER
+  STAFF
+}
+
+model Shop {
+  id                 String              @id @default(cuid())
+  slug               String              @unique
+  name               String
+  legalName          String?
+  timezone           String              @default("America/Chicago")
+  phone              String?
+  email              String?
+  websiteUrl         String?
+  isActive           Boolean             @default(true)
+  staffMembers       StaffMember[]
+  customers          Customer[]
+  addresses          Address[]
+  products           Product[]
+  orders             Order[]
+  deliveries         Delivery[]
+  timeEntries        TimeEntry[]
+  inventoryItems     InventoryItem[]
+  inventoryMovements InventoryMovement[]
+  memberships        Membership[]
+  purchaseOrders     PurchaseOrder[]
+  proposals          Proposal[]
+  createdAt          DateTime            @default(now())
+  updatedAt          DateTime            @updatedAt
+}
+
+model User {
+  id            String        @id @default(cuid())
+  name          String
+  email         String        @unique
+  passwordHash  String
+  platformRole  PlatformRole  @default(USER)
+  memberships   Membership[]
+  createdAt     DateTime      @default(now())
+  updatedAt     DateTime      @updatedAt
+}
+
+model Membership {
+  id            String          @id @default(cuid())
+  user          User            @relation(fields: [userId], references: [id])
+  userId        String
+  shop          Shop            @relation(fields: [shopId], references: [id])
+  shopId        String
+  staffMember   StaffMember?    @relation(fields: [staffMemberId], references: [id])
+  staffMemberId String?         @unique
+  role          MembershipRole
+  isDefault     Boolean         @default(false)
+  createdAt     DateTime        @default(now())
+  updatedAt     DateTime        @updatedAt
+
+  @@unique([userId, shopId])
+}
+
+model StaffMember {
+  id                 String              @id @default(cuid())
+  shop               Shop                @relation(fields: [shopId], references: [id])
+  shopId             String
+  firstName          String
+  lastName           String
+  displayName        String
+  email              String?
+  phone              String?
+  role               StaffRole
+  isActive           Boolean             @default(true)
+  assignedOrders     Order[]             @relation("DesignerOrders")
+  deliveries         Delivery[]          @relation("DriverDeliveries")
+  capturedPhotos     OrderPhoto[]        @relation("CapturedPhotos")
+  deliveryChecks     DeliveryItemCheck[]
+  timeEntries        TimeEntry[]
+  inventoryMovements InventoryMovement[]
+  membership         Membership?
+  createdAt          DateTime            @default(now())
+  updatedAt          DateTime            @updatedAt
+
+  @@unique([shopId, email])
+}
+
+model Customer {
+  id         String      @id @default(cuid())
+  shop       Shop        @relation(fields: [shopId], references: [id])
+  shopId     String
+  name       String
+  email      String?
+  phone      String?
+  notes      String?
+  reminders  String?
+  addresses  Address[]
+  orders     Order[]
+  photos     OrderPhoto[]
+  proposals  Proposal[]
+  createdAt  DateTime    @default(now())
+  updatedAt  DateTime    @updatedAt
+}
+
+model Address {
+  id            String    @id @default(cuid())
+  shop          Shop      @relation(fields: [shopId], references: [id])
+  shopId        String
+  customer      Customer? @relation(fields: [customerId], references: [id])
+  customerId    String?
+  label         String?
+  recipientName String?
+  line1         String
+  line2         String?
+  city          String
+  state         String
+  postalCode    String
+  deliveryNotes String?
+  orders        Order[]
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+}
+
+model Product {
+  id          String      @id @default(cuid())
+  shop        Shop        @relation(fields: [shopId], references: [id])
+  shopId      String
+  sku         String?
+  name        String
+  description String?
+  type        ProductType
+  basePrice   Int
+  imageUrl    String?
+  isActive    Boolean     @default(true)
+  orderItems  OrderItem[]
+  createdAt   DateTime    @default(now())
+  updatedAt   DateTime    @updatedAt
+
+  @@unique([shopId, sku])
+}
+
+model Order {
+  id                 String           @id @default(cuid())
+  shop               Shop             @relation(fields: [shopId], references: [id])
+  shopId             String
+  orderNumber        String
+  customer           Customer         @relation(fields: [customerId], references: [id])
+  customerId         String
+  occasion           String
+  cardMessage        String?
+  budgetAmount       Int?
+  totalAmount        Int
+  status             OrderStatus
+  fulfillmentType    FulfillmentType
+  dueAt              DateTime
+  assignedDesigner   StaffMember?     @relation("DesignerOrders", fields: [assignedDesignerId], references: [id])
+  assignedDesignerId String?
+  deliveryAddress    Address?         @relation(fields: [deliveryAddressId], references: [id])
+  deliveryAddressId  String?
+  notes              String?
+  internalSummary    String?
+  items              OrderItem[]
+  photos             OrderPhoto[]
+  delivery           Delivery?
+  inventoryMovements InventoryMovement[]
+  createdAt          DateTime         @default(now())
+  updatedAt          DateTime         @updatedAt
+
+  @@unique([shopId, orderNumber])
+}
+
+model OrderItem {
+  id              String              @id @default(cuid())
+  order           Order               @relation(fields: [orderId], references: [id])
+  orderId         String
+  product         Product?            @relation(fields: [productId], references: [id])
+  productId       String?
+  description     String
+  quantity        Int                 @default(1)
+  unitPrice       Int
+  requiresScan    Boolean             @default(false)
+  isPrimaryDesign Boolean             @default(false)
+  checks          DeliveryItemCheck[]
+  createdAt       DateTime            @default(now())
+  updatedAt       DateTime            @updatedAt
+}
+
+model OrderPhoto {
+  id           String       @id @default(cuid())
+  order        Order        @relation(fields: [orderId], references: [id])
+  orderId      String
+  customer     Customer?    @relation(fields: [customerId], references: [id])
+  customerId   String?
+  capturedBy   StaffMember? @relation("CapturedPhotos", fields: [capturedById], references: [id])
+  capturedById String?
+  kind         PhotoKind
+  imageUrl     String
+  caption      String?
+  takenAt      DateTime     @default(now())
+  createdAt    DateTime     @default(now())
+}
+
+model Delivery {
+  id            String               @id @default(cuid())
+  shop          Shop                 @relation(fields: [shopId], references: [id])
+  shopId        String
+  order         Order                @relation(fields: [orderId], references: [id])
+  orderId       String               @unique
+  driver        StaffMember?         @relation("DriverDeliveries", fields: [driverId], references: [id])
+  driverId      String?
+  status        DeliveryStatus       @default(PENDING)
+  routeName     String?
+  stopSequence  Int?
+  loadedAt      DateTime?
+  departedAt    DateTime?
+  deliveredAt   DateTime?
+  handoffType   DeliveryHandoffType?
+  handoffNotes  String?
+  proofPhotoUrl String?
+  checks        DeliveryItemCheck[]
+  createdAt     DateTime             @default(now())
+  updatedAt     DateTime             @updatedAt
+}
+
+model DeliveryItemCheck {
+  id          String       @id @default(cuid())
+  delivery    Delivery     @relation(fields: [deliveryId], references: [id])
+  deliveryId  String
+  orderItem   OrderItem    @relation(fields: [orderItemId], references: [id])
+  orderItemId String
+  checkedBy   StaffMember? @relation(fields: [checkedById], references: [id])
+  checkedById String?
+  checkedAt   DateTime     @default(now())
+  note        String?
+}
+
+model TimeEntry {
+  id             String      @id @default(cuid())
+  shop           Shop        @relation(fields: [shopId], references: [id])
+  shopId         String
+  staffMember    StaffMember @relation(fields: [staffMemberId], references: [id])
+  staffMemberId  String
+  startedAt      DateTime
+  endedAt        DateTime?
+  overrideReason String?
+  createdAt      DateTime    @default(now())
+  updatedAt      DateTime    @updatedAt
+}
+
+model InventoryItem {
+  id                 String              @id @default(cuid())
+  shop               Shop                @relation(fields: [shopId], references: [id])
+  shopId             String
+  name               String
+  color              String?
+  category           String
+  unit               InventoryUnit
+  quantityOnHand     Float               @default(0)
+  quantityReserved   Float               @default(0)
+  freshnessNote      String?
+  movements          InventoryMovement[]
+  purchaseOrderLines PurchaseOrderLine[]
+  createdAt          DateTime            @default(now())
+  updatedAt          DateTime            @updatedAt
+
+  @@index([shopId, category, color])
+}
+
+model InventoryMovement {
+  id                  String               @id @default(cuid())
+  shop                Shop                 @relation(fields: [shopId], references: [id])
+  shopId              String
+  item                InventoryItem        @relation(fields: [itemId], references: [id])
+  itemId              String
+  order               Order?               @relation(fields: [orderId], references: [id])
+  orderId             String?
+  purchaseOrderLine   PurchaseOrderLine?   @relation(fields: [purchaseOrderLineId], references: [id])
+  purchaseOrderLineId String?
+  createdBy           StaffMember?         @relation(fields: [createdById], references: [id])
+  createdById         String?
+  type                InventoryMovementType
+  quantity            Float
+  note                String?
+  createdAt           DateTime             @default(now())
+}
+
+model PurchaseOrder {
+  id          String              @id @default(cuid())
+  shop        Shop                @relation(fields: [shopId], references: [id])
+  shopId      String
+  poNumber    String
+  vendorName  String
+  vendorEmail String?
+  vendorPhone String?
+  status      PurchaseOrderStatus @default(DRAFT)
+  expectedAt  DateTime?
+  notes       String?
+  lines       PurchaseOrderLine[]
+  createdAt   DateTime            @default(now())
+  updatedAt   DateTime            @updatedAt
+
+  @@unique([shopId, poNumber])
+}
+
+model PurchaseOrderLine {
+  id               String            @id @default(cuid())
+  purchaseOrder    PurchaseOrder     @relation(fields: [purchaseOrderId], references: [id])
+  purchaseOrderId  String
+  inventoryItem    InventoryItem     @relation(fields: [inventoryItemId], references: [id])
+  inventoryItemId  String
+  description      String
+  orderedQuantity  Float
+  receivedQuantity Float             @default(0)
+  unitCostCents    Int?
+  movements        InventoryMovement[]
+  createdAt        DateTime          @default(now())
+  updatedAt        DateTime          @updatedAt
+}
+
+model Proposal {
+  id             String         @id @default(cuid())
+  shop           Shop           @relation(fields: [shopId], references: [id])
+  shopId         String
+  customer       Customer?      @relation(fields: [customerId], references: [id])
+  customerId     String?
+  proposalNumber String
+  title          String
+  type           ProposalType
+  status         ProposalStatus @default(DRAFT)
+  eventDate      DateTime?
+  venue          String?
+  contactName    String?
+  contactEmail   String?
+  notes          String?
+  lines          ProposalLine[]
+  createdAt      DateTime       @default(now())
+  updatedAt      DateTime       @updatedAt
+
+  @@unique([shopId, proposalNumber])
+}
+
+model ProposalLine {
+  id          String    @id @default(cuid())
+  proposal    Proposal  @relation(fields: [proposalId], references: [id])
+  proposalId  String
+  description String
+  quantity    Float
+  unitPrice   Int
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+}

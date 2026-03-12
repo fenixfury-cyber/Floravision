@@ -1,0 +1,50 @@
+{
+  "name": "floravision",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "lint": "eslint",
+    "prisma:generate": "prisma generate",
+    "prisma:generate:sqlite": "FLORAVISION_DB_PROVIDER=sqlite prisma generate --schema prisma/schema.prisma",
+    "prisma:generate:postgres": "FLORAVISION_DB_PROVIDER=postgres prisma generate --schema prisma/schema.postgres.prisma",
+    "prisma:validate:sqlite": "prisma validate --schema prisma/schema.prisma",
+    "prisma:validate:postgres": "prisma validate --schema prisma/schema.postgres.prisma",
+    "db:push": "prisma db push",
+    "db:push:postgres": "FLORAVISION_DB_PROVIDER=postgres prisma db push --schema prisma/schema.postgres.prisma",
+    "db:init": "node scripts/reset-db.mjs",
+    "db:init:sqlite": "FLORAVISION_DB_PROVIDER=sqlite node scripts/reset-db.mjs",
+    "db:seed": "node scripts/seed.mjs",
+    "db:seed:sqlite": "FLORAVISION_DB_PROVIDER=sqlite node scripts/seed.mjs",
+    "db:seed:postgres": "FLORAVISION_DB_PROVIDER=postgres node scripts/seed.mjs",
+    "db:setup": "npm run prisma:generate && npm run db:init && npm run db:seed",
+    "db:setup:sqlite": "npm run prisma:generate:sqlite && npm run db:init:sqlite && npm run db:seed:sqlite",
+    "session:secret": "node scripts/generate-session-secret.mjs",
+    "readiness": "node scripts/readiness-check.mjs"
+  },
+  "dependencies": {
+    "@prisma/adapter-better-sqlite3": "^7.5.0",
+    "@prisma/adapter-pg": "^7.5.0",
+    "@prisma/client": "^7.5.0",
+    "@vercel/blob": "^2.3.1",
+    "better-sqlite3": "^12.6.2",
+    "dotenv": "^17.3.1",
+    "next": "16.1.6",
+    "pg": "^8.20.0",
+    "prisma": "^7.5.0",
+    "react": "19.2.3",
+    "react-dom": "19.2.3"
+  },
+  "devDependencies": {
+    "@tailwindcss/postcss": "^4",
+    "@types/node": "^20",
+    "@types/react": "^19",
+    "@types/react-dom": "^19",
+    "eslint": "^9",
+    "eslint-config-next": "16.1.6",
+    "tailwindcss": "^4",
+    "typescript": "^5"
+  }
+}

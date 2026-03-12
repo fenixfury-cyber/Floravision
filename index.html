@@ -1,0 +1,406 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>FloraVision</title>
+    <link rel="stylesheet" href="./styles.css" />
+  </head>
+  <body>
+    <div class="app-shell">
+      <aside class="sidebar">
+        <div class="brand">
+          <div class="brand-mark">FV</div>
+          <div>
+            <p class="eyebrow">Floral Operating System</p>
+            <h1>FloraVision</h1>
+          </div>
+        </div>
+
+        <button class="search-launch" id="open-search" type="button">
+          Search everything
+          <span>Ctrl K</span>
+        </button>
+
+        <nav class="nav">
+          <button class="nav-item active" data-panel="dashboard">Dashboard</button>
+          <button class="nav-item" data-panel="orders">Orders</button>
+          <button class="nav-item" data-panel="customers">Customers</button>
+          <button class="nav-item" data-panel="deliveries">Deliveries</button>
+          <button class="nav-item" data-panel="inventory">Cooler Vision</button>
+          <button class="nav-item" data-panel="reports">Reports</button>
+        </nav>
+
+        <section class="sidebar-card">
+          <p class="eyebrow">Today</p>
+          <h2>Quick Signals</h2>
+          <ul class="signal-list">
+            <li><strong>18</strong> pickups before noon</li>
+            <li><strong>4</strong> unattended drop-offs</li>
+            <li><strong>3</strong> staff missing clock-ins</li>
+            <li><strong>Hydrangea</strong> use today</li>
+          </ul>
+        </section>
+      </aside>
+
+      <main class="main-content">
+        <header class="hero">
+          <div>
+            <p class="eyebrow">Prototype Slice 01</p>
+            <h2>Search-first POS for floral shops</h2>
+            <p class="hero-copy">
+              A modern dashboard for owners, designers, and drivers. Built around
+              freestyle design, delivery accountability, and fast navigation.
+            </p>
+          </div>
+          <div class="hero-actions">
+            <button class="primary-button" type="button">New Order</button>
+            <button class="secondary-button" type="button">Morning Brief</button>
+          </div>
+        </header>
+
+        <section class="panel active" id="dashboard">
+          <div class="stats-grid">
+            <article class="stat-card">
+              <p class="eyebrow">Sales Today</p>
+              <h3>$4,280</h3>
+              <p>42 orders, up 12% over last Wednesday</p>
+            </article>
+            <article class="stat-card">
+              <p class="eyebrow">Designer Leader</p>
+              <h3>Tasha</h3>
+              <p>11 completed orders, $1,340 sold</p>
+            </article>
+            <article class="stat-card warning">
+              <p class="eyebrow">Inventory Watch</p>
+              <h3>Red Roses</h3>
+              <p>Projected shortage by 2:45 PM</p>
+            </article>
+            <article class="stat-card">
+              <p class="eyebrow">Delivery Status</p>
+              <h3>14/19</h3>
+              <p>Five still pending proof of delivery</p>
+            </article>
+          </div>
+
+          <div class="content-grid">
+            <section class="card">
+              <div class="card-header">
+                <div>
+                  <p class="eyebrow">Owner KPI</p>
+                  <h3>Performance Snapshot</h3>
+                </div>
+                <span class="chip">Live</span>
+              </div>
+              <div class="metric-rows">
+                <div class="metric-row">
+                  <span>Sales by type</span>
+                  <strong>Designer's Choice leads at 38%</strong>
+                </div>
+                <div class="metric-row">
+                  <span>Sales by designer</span>
+                  <strong>Tasha, Eli, Morgan</strong>
+                </div>
+                <div class="metric-row">
+                  <span>Clock-in exceptions</span>
+                  <strong>3 open overrides</strong>
+                </div>
+                <div class="metric-row">
+                  <span>Late route risk</span>
+                  <strong>1 route near cutoff</strong>
+                </div>
+              </div>
+            </section>
+
+            <section class="card">
+              <div class="card-header">
+                <div>
+                  <p class="eyebrow">Morning Queue</p>
+                  <h3>Priority Orders</h3>
+                </div>
+                <span class="chip neutral">8 items</span>
+              </div>
+              <ul class="order-list">
+                <li>
+                  <strong>#10428</strong>
+                  <span>Pickup 9:30 AM • Bright Birthday • Tasha</span>
+                </li>
+                <li>
+                  <strong>#10434</strong>
+                  <span>Delivery 10:15 AM • Sympathy Spray • Eli</span>
+                </li>
+                <li>
+                  <strong>#10441</strong>
+                  <span>Overnight order • Designer's Choice • Unassigned</span>
+                </li>
+              </ul>
+            </section>
+          </div>
+        </section>
+
+        <section class="panel" id="orders">
+          <div class="section-heading">
+            <div>
+              <p class="eyebrow">Orders</p>
+              <h3>Production Board</h3>
+            </div>
+            <span class="chip">Freestyle workflow</span>
+          </div>
+
+          <div class="card">
+            <div class="board-row board-header">
+              <span>Order</span>
+              <span>Occasion</span>
+              <span>Designer</span>
+              <span>Delivery</span>
+              <span>Components</span>
+            </div>
+            <div class="board-row">
+              <span>#10428</span>
+              <span>Birthday / bright</span>
+              <span>Tasha</span>
+              <span>Pickup 9:30 AM</span>
+              <span>Bouquet, card, balloon</span>
+            </div>
+            <div class="board-row">
+              <span>#10434</span>
+              <span>Sympathy</span>
+              <span>Eli</span>
+              <span>Funeral 10:15 AM</span>
+              <span>Spray, ribbon</span>
+            </div>
+            <div class="board-row">
+              <span>#10441</span>
+              <span>Designer's Choice</span>
+              <span>Unassigned</span>
+              <span>Delivery 11:00 AM</span>
+              <span>Bouquet, teddy bear, chocolates</span>
+            </div>
+          </div>
+        </section>
+
+        <section class="panel" id="customers">
+          <div class="section-heading">
+            <div>
+              <p class="eyebrow">Customers</p>
+              <h3>Relationship Timeline</h3>
+            </div>
+          </div>
+
+          <div class="content-grid">
+            <section class="card">
+              <div class="card-header">
+                <div>
+                  <p class="eyebrow">Lookup</p>
+                  <h3>Sarah Whitmore</h3>
+                </div>
+                <span class="chip neutral">Customer #2871</span>
+              </div>
+              <div class="metric-rows">
+                <div class="metric-row">
+                  <span>Balance</span>
+                  <strong>$0.00</strong>
+                </div>
+                <div class="metric-row">
+                  <span>Occasions</span>
+                  <strong>Anniversary, Birthday, Sympathy</strong>
+                </div>
+                <div class="metric-row">
+                  <span>Last order</span>
+                  <strong>February 28, 2026</strong>
+                </div>
+              </div>
+            </section>
+
+            <section class="card">
+              <div class="card-header">
+                <div>
+                  <p class="eyebrow">Photo History</p>
+                  <h3>Past Arrangements</h3>
+                </div>
+              </div>
+              <div class="photo-strip">
+                <div class="photo-tile">Two orders ago</div>
+                <div class="photo-tile">Door delivery</div>
+                <div class="photo-tile">Anniversary roses</div>
+              </div>
+            </section>
+          </div>
+        </section>
+
+        <section class="panel" id="deliveries">
+          <div class="section-heading">
+            <div>
+              <p class="eyebrow">Driver App</p>
+              <h3>Route Accountability</h3>
+            </div>
+          </div>
+
+          <div class="content-grid">
+            <section class="card">
+              <div class="card-header">
+                <div>
+                  <p class="eyebrow">Load Check</p>
+                  <h3>Order #10441</h3>
+                </div>
+                <span class="chip alert">Action required</span>
+              </div>
+              <ul class="checklist">
+                <li class="checked">Bouquet scanned</li>
+                <li>Teddy bear missing scan</li>
+                <li>Chocolate box missing scan</li>
+                <li>Card message attached</li>
+              </ul>
+            </section>
+
+            <section class="card">
+              <div class="card-header">
+                <div>
+                  <p class="eyebrow">Proof of Delivery</p>
+                  <h3>Status Options</h3>
+                </div>
+              </div>
+              <div class="status-grid">
+                <span class="status-pill">Hand delivered</span>
+                <span class="status-pill">Left at door</span>
+                <span class="status-pill">Funeral flower room</span>
+                <span class="status-pill">Hospital front desk</span>
+                <span class="status-pill">Apartment front desk</span>
+                <span class="status-pill">Other with notes</span>
+              </div>
+            </section>
+          </div>
+        </section>
+
+        <section class="panel" id="inventory">
+          <div class="section-heading">
+            <div>
+              <p class="eyebrow">Cooler Vision</p>
+              <h3>Prettiest In The Cooler</h3>
+            </div>
+            <span class="chip">Future-facing</span>
+          </div>
+
+          <div class="content-grid">
+            <section class="card">
+              <div class="card-header">
+                <div>
+                  <p class="eyebrow">Visual Palette</p>
+                  <h3>Today's Stars</h3>
+                </div>
+              </div>
+              <div class="palette-grid">
+                <div class="palette-tile rose">Pink Spray Roses</div>
+                <div class="palette-tile amber">Orange Gerbera</div>
+                <div class="palette-tile white">White Hydrangea</div>
+                <div class="palette-tile plum">Purple Stock</div>
+              </div>
+            </section>
+
+            <section class="card">
+              <div class="card-header">
+                <div>
+                  <p class="eyebrow">Approximate Counts</p>
+                  <h3>Cooler Health</h3>
+                </div>
+              </div>
+              <div class="metric-rows">
+                <div class="metric-row">
+                  <span>Red Roses</span>
+                  <strong>~42</strong>
+                </div>
+                <div class="metric-row">
+                  <span>Pink Roses</span>
+                  <strong>~28</strong>
+                </div>
+                <div class="metric-row">
+                  <span>Hydrangea</span>
+                  <strong>Use today</strong>
+                </div>
+                <div class="metric-row">
+                  <span>Greens</span>
+                  <strong>Plenty</strong>
+                </div>
+              </div>
+            </section>
+          </div>
+        </section>
+
+        <section class="panel" id="reports">
+          <div class="section-heading">
+            <div>
+              <p class="eyebrow">Reports</p>
+              <h3>Shop And Designer Analytics</h3>
+            </div>
+          </div>
+
+          <div class="content-grid">
+            <section class="card">
+              <div class="card-header">
+                <div>
+                  <p class="eyebrow">Sales by Designer</p>
+                  <h3>March 2026</h3>
+                </div>
+              </div>
+              <div class="metric-rows">
+                <div class="metric-row">
+                  <span>Tasha</span>
+                  <strong>$12,480</strong>
+                </div>
+                <div class="metric-row">
+                  <span>Eli</span>
+                  <strong>$9,220</strong>
+                </div>
+                <div class="metric-row">
+                  <span>Morgan</span>
+                  <strong>$7,910</strong>
+                </div>
+              </div>
+            </section>
+
+            <section class="card">
+              <div class="card-header">
+                <div>
+                  <p class="eyebrow">Labor Exceptions</p>
+                  <h3>Attendance Flags</h3>
+                </div>
+              </div>
+              <ul class="order-list">
+                <li>
+                  <strong>Jamie</strong>
+                  <span>Missed clock-out on March 10</span>
+                </li>
+                <li>
+                  <strong>Alex</strong>
+                  <span>Late clock-in override on March 11</span>
+                </li>
+              </ul>
+            </section>
+          </div>
+        </section>
+      </main>
+    </div>
+
+    <div class="search-modal hidden" id="search-modal">
+      <div class="search-dialog">
+        <div class="search-header">
+          <input
+            id="search-input"
+            type="text"
+            placeholder="Try: inventory, order 10441, designer payroll"
+          />
+          <button id="close-search" type="button" aria-label="Close search">×</button>
+        </div>
+        <div class="search-results">
+          <button class="result-item" data-target="inventory">Cooler Vision</button>
+          <button class="result-item" data-target="deliveries">Driver Load Check</button>
+          <button class="result-item" data-target="reports">Designer Analytics</button>
+          <button class="result-item" data-target="customers">Customer Photo History</button>
+          <button class="result-item" data-target="orders">Production Board</button>
+        </div>
+      </div>
+    </div>
+
+    <script src="./app.js"></script>
+  </body>
+</html>
