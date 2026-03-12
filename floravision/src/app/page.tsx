@@ -65,19 +65,16 @@ export default async function Home() {
 
             <div className="mt-6 grid gap-4 md:grid-cols-3">
               <article className="rounded-[24px] border border-stone-200/70 bg-stone-50/80 p-5">
-                <p className="text-[0.68rem] uppercase tracking-[0.28em] text-stone-500">Platform Admin</p>
-                <p className="mt-2 text-sm text-stone-700">admin@floravision.local</p>
-                <p className="mt-1 text-sm text-stone-700">admin1234</p>
+                <p className="text-[0.68rem] uppercase tracking-[0.28em] text-stone-500">Multi-Tenant</p>
+                <p className="mt-2 text-sm text-stone-700">Platform admins can create and access florist tenants.</p>
               </article>
               <article className="rounded-[24px] border border-stone-200/70 bg-stone-50/80 p-5">
-                <p className="text-[0.68rem] uppercase tracking-[0.28em] text-stone-500">Shop Owner</p>
-                <p className="mt-2 text-sm text-stone-700">tasha@petalsandpost.com</p>
-                <p className="mt-1 text-sm text-stone-700">petals123</p>
+                <p className="text-[0.68rem] uppercase tracking-[0.28em] text-stone-500">Role Aware</p>
+                <p className="mt-2 text-sm text-stone-700">Owners, designers, drivers, and admins see scoped tools.</p>
               </article>
               <article className="rounded-[24px] border border-stone-200/70 bg-stone-50/80 p-5">
-                <p className="text-[0.68rem] uppercase tracking-[0.28em] text-stone-500">Seeded Tenant</p>
-                <p className="mt-2 text-sm text-stone-700">petals-and-post</p>
-                <p className="mt-1 text-sm text-stone-700">Workspace ready</p>
+                <p className="text-[0.68rem] uppercase tracking-[0.28em] text-stone-500">Workflow Ready</p>
+                <p className="mt-2 text-sm text-stone-700">Orders, customers, time clock, inventory, and proposals are live.</p>
               </article>
             </div>
           </section>
