@@ -214,7 +214,7 @@ export async function getShopBySlug(slug: string) {
   }
 }
 
-type ShopOrdersFilters = {
+export type ShopOrdersFilters = {
   status?: OrderStatus;
   fulfillmentType?: FulfillmentType;
   designerId?: string;

@@ -1,10 +1,9 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import type { FulfillmentType, OrderStatus } from "@prisma/client";
 import { assignOrderDesigner, updateOrderStatus } from "@/app/actions";
 import { getMembershipForShop, requireShopAccess } from "@/lib/auth";
 import { canManageOrders } from "@/lib/authorization";
-import { getShopOrders } from "@/lib/shop-data";
+import { getShopOrders, type ShopOrdersFilters } from "@/lib/shop-data";
 
 export const dynamic = "force-dynamic";
 
@@ -19,6 +18,9 @@ type PageProps = {
     query?: string;
   }>;
 };
+
+type OrderStatus = NonNullable<ShopOrdersFilters["status"]>;
+type FulfillmentType = NonNullable<ShopOrdersFilters["fulfillmentType"]>;
 
 type ShopOrdersData = NonNullable<Awaited<ReturnType<typeof getShopOrders>>>;
 type ShopOrder = ShopOrdersData["orders"][number];
@@ -56,7 +58,7 @@ function formatTime(value: Date) {
   }).format(value);
 }
 
-function prettyStatus(status: OrderStatus) {
+function prettyStatus(status: string) {
   return status.replaceAll("_", " ").toLowerCase();
 }
 
@@ -70,9 +72,12 @@ export default async function ShopOrdersPage({ params, searchParams }: PageProps
     notFound();
   }
 
+  const statusFilter = statusOptions.find((option) => option.value === filters.status)?.value || undefined;
+  const fulfillmentFilter = fulfillmentOptions.find((option) => option.value === filters.fulfillmentType)?.value || undefined;
+
   const data = await getShopOrders(slug, {
-    status: (filters.status as OrderStatus | undefined) || undefined,
-    fulfillmentType: (filters.fulfillmentType as FulfillmentType | undefined) || undefined,
+    status: statusFilter as ShopOrdersFilters["status"],
+    fulfillmentType: fulfillmentFilter as ShopOrdersFilters["fulfillmentType"],
     designerId: filters.designerId || undefined,
     query: filters.query || undefined,
   });
