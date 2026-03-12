@@ -13,6 +13,43 @@ type PageProps = {
   }>;
 };
 
+type CustomerAddress = {
+  id: string;
+  label: string | null;
+  line1: string;
+  line2: string | null;
+  city: string;
+  state: string;
+  postalCode: string;
+  deliveryNotes: string | null;
+};
+
+type CustomerPhoto = {
+  id: string;
+  caption: string | null;
+  kind: string;
+  takenAt: Date;
+  imageUrl: string;
+};
+
+type CustomerOrderItem = {
+  id: string;
+  description: string;
+};
+
+type CustomerOrder = {
+  id: string;
+  orderNumber: string;
+  occasion: string;
+  dueAt: Date;
+  totalAmount: number;
+  status: string;
+  assignedDesigner: {
+    displayName: string;
+  } | null;
+  items: CustomerOrderItem[];
+};
+
 function formatMoney(cents: number) {
   return new Intl.NumberFormat("en-US", {
     style: "currency",
@@ -133,7 +170,7 @@ export default async function CustomerDetailPage({ params }: PageProps) {
                 <h2 className="font-serif text-3xl text-stone-950">Delivery memory</h2>
               </div>
               <div className="mt-4 space-y-3">
-                {customer.addresses.map((address) => (
+                {customer.addresses.map((address: CustomerAddress) => (
                   <article key={address.id} className="rounded-[18px] border border-stone-200 bg-stone-50/80 p-4">
                     <p className="text-sm font-semibold text-stone-950">{address.label ?? "Address"}</p>
                     <p className="mt-1 text-sm text-stone-600">
@@ -155,7 +192,7 @@ export default async function CustomerDetailPage({ params }: PageProps) {
                 <h2 className="font-serif text-3xl text-stone-950">Arrangement history</h2>
               </div>
               <div className="mt-4 grid gap-3">
-                {customer.photos.map((photo) => (
+                {customer.photos.map((photo: CustomerPhoto) => (
                   <PhotoCard key={photo.id} photo={photo} />
                 ))}
               </div>
@@ -168,7 +205,7 @@ export default async function CustomerDetailPage({ params }: PageProps) {
               <h2 className="font-serif text-3xl text-stone-950">Past transactions</h2>
             </div>
             <div className="mt-4 grid gap-3">
-              {customer.orders.map((order) => (
+              {customer.orders.map((order: CustomerOrder) => (
                 <Link
                   key={order.id}
                   href={`/shops/${slug}/orders/${order.orderNumber}`}
@@ -183,7 +220,7 @@ export default async function CustomerDetailPage({ params }: PageProps) {
                         {order.assignedDesigner?.displayName ?? "Unassigned"} • {formatDateTime(order.dueAt)}
                       </p>
                       <div className="mt-3 flex flex-wrap gap-2">
-                        {order.items.map((item) => (
+                        {order.items.map((item: CustomerOrderItem) => (
                           <span
                             key={item.id}
                             className="rounded-full border border-stone-200 bg-white px-3 py-1 text-xs text-stone-700"
