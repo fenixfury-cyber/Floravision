@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { createProposal } from "@/app/actions";
-import { requireShopAccess } from "@/lib/auth";
+import { getMembershipForShop, requireShopAccess } from "@/lib/auth";
 import { canManageShop } from "@/lib/authorization";
 import { getShopProposals } from "@/lib/shop-data";
 
@@ -23,7 +23,7 @@ function formatMoney(cents: number) {
 export default async function ShopProposalsPage({ params }: PageProps) {
   const { slug } = await params;
   const access = await requireShopAccess(slug);
-  const membership = access.user.memberships.find((entry) => entry.shop.slug === slug) ?? null;
+  const membership = getMembershipForShop(access, slug);
 
   if (!canManageShop(access.user.platformRole, membership?.role)) {
     notFound();

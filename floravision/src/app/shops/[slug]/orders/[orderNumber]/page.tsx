@@ -8,7 +8,7 @@ import {
   updateOrderNotes,
   updateOrderStatus,
 } from "@/app/actions";
-import { requireShopAccess } from "@/lib/auth";
+import { getMembershipForShop, requireShopAccess } from "@/lib/auth";
 import { canHandleDeliveries, canManageOrders } from "@/lib/authorization";
 import { getOrderDetail } from "@/lib/shop-data";
 
@@ -84,7 +84,7 @@ export default async function OrderDetailPage({ params }: PageProps) {
 
   const checkedItemIds = new Set(order.delivery?.checks.map((check) => check.orderItemId) ?? []);
   const missingItems = order.items.filter((item) => item.requiresScan && !checkedItemIds.has(item.id));
-  const membership = access.user.memberships.find((entry) => entry.shop.slug === slug) ?? null;
+  const membership = getMembershipForShop(access, slug);
   const role = membership?.role;
   const showOrderOps = canManageOrders(access.user.platformRole, role);
   const showDeliveryOps = canHandleDeliveries(access.user.platformRole, role);

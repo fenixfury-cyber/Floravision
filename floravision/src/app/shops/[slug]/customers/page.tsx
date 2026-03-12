@@ -1,6 +1,6 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { requireShopAccess } from "@/lib/auth";
+import { getMembershipForShop, requireShopAccess } from "@/lib/auth";
 import { canManageOrders } from "@/lib/authorization";
 import { getShopCustomers } from "@/lib/shop-data";
 
@@ -19,7 +19,7 @@ export default async function ShopCustomersPage({ params, searchParams }: PagePr
   const { slug } = await params;
   const filters = await searchParams;
   const access = await requireShopAccess(slug);
-  const membership = access.user.memberships.find((entry) => entry.shop.slug === slug) ?? null;
+  const membership = getMembershipForShop(access, slug);
 
   if (!canManageOrders(access.user.platformRole, membership?.role)) {
     notFound();

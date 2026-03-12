@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { logInventoryAdjustment, receiveInventory } from "@/app/actions";
-import { requireShopAccess } from "@/lib/auth";
+import { getMembershipForShop, requireShopAccess } from "@/lib/auth";
 import { canManageShop } from "@/lib/authorization";
 import { getShopInventory } from "@/lib/shop-data";
 
@@ -20,7 +20,7 @@ function formatMovementType(type: string) {
 export default async function ShopInventoryPage({ params }: PageProps) {
   const { slug } = await params;
   const access = await requireShopAccess(slug);
-  const membership = access.user.memberships.find((entry) => entry.shop.slug === slug) ?? null;
+  const membership = getMembershipForShop(access, slug);
 
   if (!canManageShop(access.user.platformRole, membership?.role)) {
     notFound();

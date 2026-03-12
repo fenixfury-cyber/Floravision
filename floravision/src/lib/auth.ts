@@ -12,6 +12,10 @@ type SessionPayload = {
   expiresAt: number;
 };
 
+export type CurrentSession = Awaited<ReturnType<typeof getCurrentSession>>;
+export type ShopSession = NonNullable<CurrentSession>;
+export type ShopMembership = ShopSession["user"]["memberships"][number];
+
 function base64url(input: string | Buffer) {
   return Buffer.from(input).toString("base64url");
 }
@@ -147,7 +151,7 @@ export async function requireShopAccess(shopSlug: string) {
     return session;
   }
 
-  const membership = session.user.memberships.find((entry) => entry.shop.slug === shopSlug);
+  const membership = session.user.memberships.find((entry: ShopMembership) => entry.shop.slug === shopSlug);
 
   if (!membership) {
     redirect("/");
@@ -157,4 +161,8 @@ export async function requireShopAccess(shopSlug: string) {
     ...session,
     membership,
   };
+}
+
+export function getMembershipForShop(access: ShopSession, shopSlug: string) {
+  return access.user.memberships.find((entry: ShopMembership) => entry.shop.slug === shopSlug) ?? null;
 }

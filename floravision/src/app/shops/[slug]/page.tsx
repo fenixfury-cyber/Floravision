@@ -1,6 +1,6 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { requireShopAccess } from "@/lib/auth";
+import { getMembershipForShop, requireShopAccess } from "@/lib/auth";
 import {
   canHandleDeliveries,
   canManageOrders,
@@ -32,7 +32,7 @@ export default async function ShopWorkspacePage({ params }: PageProps) {
     notFound();
   }
 
-  const membership = access.user.memberships.find((entry) => entry.shop.slug === slug) ?? null;
+  const membership = getMembershipForShop(access, slug);
   const accessRole =
     access.user.platformRole === "PLATFORM_ADMIN" ? "platform admin" : membership?.role.toLowerCase() ?? "member";
   const role = membership?.role;
