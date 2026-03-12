@@ -13,6 +13,11 @@ type PageProps = {
   }>;
 };
 
+type ShopProposalsData = NonNullable<Awaited<ReturnType<typeof getShopProposals>>>;
+type ProposalCustomer = ShopProposalsData["shop"]["customers"][number];
+type Proposal = ShopProposalsData["shop"]["proposals"][number];
+type ProposalLine = Proposal["lines"][number];
+
 function formatMoney(cents: number) {
   return new Intl.NumberFormat("en-US", {
     style: "currency",
@@ -116,7 +121,7 @@ export default async function ShopProposalsPage({ params }: PageProps) {
                 Customer
                 <select name="customerId" className="rounded-2xl border border-stone-200 bg-stone-50 px-4 py-3">
                   <option value="">No linked customer</option>
-                  {data.shop.customers.map((customer) => (
+                  {data.shop.customers.map((customer: ProposalCustomer) => (
                     <option key={customer.id} value={customer.id}>
                       {customer.name}
                     </option>
@@ -208,8 +213,11 @@ export default async function ShopProposalsPage({ params }: PageProps) {
           </section>
 
           <section className="grid gap-4">
-            {data.shop.proposals.map((proposal) => {
-              const total = proposal.lines.reduce((sum, line) => sum + line.unitPrice * line.quantity, 0);
+            {data.shop.proposals.map((proposal: Proposal) => {
+              const total = proposal.lines.reduce(
+                (sum: number, line: ProposalLine) => sum + line.unitPrice * line.quantity,
+                0,
+              );
 
               return (
                 <article
@@ -237,7 +245,7 @@ export default async function ShopProposalsPage({ params }: PageProps) {
                     </div>
                   </div>
                   <div className="mt-4 grid gap-3">
-                    {proposal.lines.map((line) => (
+                    {proposal.lines.map((line: ProposalLine) => (
                       <div key={line.id} className="rounded-[20px] border border-stone-200 bg-stone-50/80 p-4">
                         <div className="flex flex-col gap-2 sm:flex-row sm:items-start sm:justify-between">
                           <div>

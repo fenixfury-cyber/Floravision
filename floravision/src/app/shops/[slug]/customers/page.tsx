@@ -15,6 +15,9 @@ type PageProps = {
   }>;
 };
 
+type ShopCustomersData = NonNullable<Awaited<ReturnType<typeof getShopCustomers>>>;
+type ShopCustomer = ShopCustomersData["customers"][number];
+
 export default async function ShopCustomersPage({ params, searchParams }: PageProps) {
   const { slug } = await params;
   const filters = await searchParams;
@@ -90,7 +93,7 @@ export default async function ShopCustomersPage({ params, searchParams }: PagePr
         </section>
 
         <section className="mt-6 grid gap-4">
-          {data.customers.map((customer) => (
+          {data.customers.map((customer: ShopCustomer) => (
             <Link
               key={customer.id}
               href={`/shops/${slug}/customers/${customer.id}`}

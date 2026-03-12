@@ -13,6 +13,11 @@ type PageProps = {
   }>;
 };
 
+type ShopProcurementData = NonNullable<Awaited<ReturnType<typeof getShopProcurement>>>;
+type ProcurementInventoryItem = ShopProcurementData["shop"]["inventoryItems"][number];
+type PurchaseOrder = ShopProcurementData["shop"]["purchaseOrders"][number];
+type PurchaseOrderLine = PurchaseOrder["lines"][number];
+
 function formatMoney(cents: number | null) {
   if (cents == null) {
     return "N/A";
@@ -115,7 +120,7 @@ export default async function ShopProcurementPage({ params }: PageProps) {
               <label className="grid gap-2 text-sm text-stone-700">
                 Inventory item
                 <select name="itemId" className="rounded-2xl border border-stone-200 bg-stone-50 px-4 py-3">
-                  {data.shop.inventoryItems.map((item) => (
+                  {data.shop.inventoryItems.map((item: ProcurementInventoryItem) => (
                     <option key={item.id} value={item.id}>
                       {item.color ? `${item.color} ` : ""}
                       {item.name}
@@ -160,7 +165,7 @@ export default async function ShopProcurementPage({ params }: PageProps) {
           </section>
 
           <section className="grid gap-4">
-            {data.shop.purchaseOrders.map((purchaseOrder) => (
+            {data.shop.purchaseOrders.map((purchaseOrder: PurchaseOrder) => (
               <article
                 key={purchaseOrder.id}
                 className="rounded-[28px] border border-stone-200/70 bg-white/80 p-5 shadow-[0_18px_45px_rgba(90,67,49,0.08)]"
@@ -181,7 +186,7 @@ export default async function ShopProcurementPage({ params }: PageProps) {
                 </div>
 
                 <div className="mt-4 grid gap-3">
-                  {purchaseOrder.lines.map((line) => (
+                  {purchaseOrder.lines.map((line: PurchaseOrderLine) => (
                     <div key={line.id} className="rounded-[20px] border border-stone-200 bg-stone-50/80 p-4">
                       <div className="flex flex-col gap-3 lg:flex-row lg:items-start lg:justify-between">
                         <div>

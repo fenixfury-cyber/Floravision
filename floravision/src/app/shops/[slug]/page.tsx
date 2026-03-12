@@ -16,6 +16,11 @@ type PageProps = {
   }>;
 };
 
+type ShopWorkspaceData = NonNullable<Awaited<ReturnType<typeof getShopBySlug>>>;
+type WorkspaceOrder = ShopWorkspaceData["orders"][number];
+type WorkspaceStaffMember = ShopWorkspaceData["staffMembers"][number];
+type WorkspaceInventoryItem = ShopWorkspaceData["inventoryItems"][number];
+
 function formatMoney(cents: number) {
   return new Intl.NumberFormat("en-US", {
     style: "currency",
@@ -184,7 +189,7 @@ export default async function ShopWorkspacePage({ params }: PageProps) {
             </div>
             <div className="mt-4 grid gap-3">
               {showOrders ? (
-                shop.orders.map((order) => (
+                shop.orders.map((order: WorkspaceOrder) => (
                   <Link
                     key={order.id}
                     href={`/shops/${shop.slug}/orders/${order.orderNumber}`}
@@ -222,7 +227,7 @@ export default async function ShopWorkspacePage({ params }: PageProps) {
               </div>
               {showManagement ? (
                 <div className="mt-4 space-y-3">
-                  {shop.staffMembers.map((staffMember) => (
+                  {shop.staffMembers.map((staffMember: WorkspaceStaffMember) => (
                     <article key={staffMember.id} className="rounded-[18px] border border-stone-200 bg-stone-50/80 p-4">
                       <p className="text-sm font-semibold text-stone-950">{staffMember.displayName}</p>
                       <p className="mt-1 text-sm text-stone-600">{staffMember.role.toLowerCase()}</p>
@@ -246,7 +251,7 @@ export default async function ShopWorkspacePage({ params }: PageProps) {
                 </h2>
               </div>
               <div className="mt-4 space-y-3">
-                {shop.inventoryItems.map((item) => (
+                {shop.inventoryItems.map((item: WorkspaceInventoryItem) => (
                   <article key={item.id} className="rounded-[18px] border border-stone-200 bg-stone-50/80 p-4">
                     <p className="text-sm font-semibold text-stone-950">
                       {item.color ? `${item.color} ` : ""}

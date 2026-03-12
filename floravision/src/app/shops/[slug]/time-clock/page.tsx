@@ -17,6 +17,12 @@ type PageProps = {
   }>;
 };
 
+type ShopTimeClockData = NonNullable<Awaited<ReturnType<typeof getShopTimeClock>>>;
+type TimeClockStaffMember = ShopTimeClockData["shop"]["staffMembers"][number];
+type OverrideEntry = ShopTimeClockData["openOverrides"][number];
+type ActiveEntry = ShopTimeClockData["activeEntries"][number];
+type TodayEntry = ShopTimeClockData["todayEntries"][number];
+
 function formatDateTime(value: Date) {
   return new Intl.DateTimeFormat("en-US", {
     month: "short",
@@ -94,7 +100,7 @@ export default async function ShopTimeClockPage({ params }: PageProps) {
                     name="staffMemberId"
                     className="rounded-2xl border border-stone-200 bg-stone-50 px-4 py-3"
                   >
-                    {data.shop.staffMembers.map((staffMember) => (
+                    {data.shop.staffMembers.map((staffMember: TimeClockStaffMember) => (
                       <option key={staffMember.id} value={staffMember.id}>
                         {staffMember.displayName} ({staffMember.role.toLowerCase()})
                       </option>
@@ -118,7 +124,7 @@ export default async function ShopTimeClockPage({ params }: PageProps) {
                     No active override exceptions right now.
                   </div>
                 ) : (
-                  data.openOverrides.map((entry) => (
+                  data.openOverrides.map((entry: OverrideEntry) => (
                     <form
                       key={entry.id}
                       action={resolveTimeEntryOverride}
@@ -168,7 +174,7 @@ export default async function ShopTimeClockPage({ params }: PageProps) {
                     No active shifts at the moment.
                   </div>
                 ) : (
-                  data.activeEntries.map((entry) => (
+                  data.activeEntries.map((entry: ActiveEntry) => (
                     <article key={entry.id} className="rounded-[20px] border border-stone-200 bg-stone-50/80 p-4">
                       <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
                         <div>
@@ -195,7 +201,7 @@ export default async function ShopTimeClockPage({ params }: PageProps) {
                 <h2 className="font-serif text-3xl text-stone-950">Attendance log</h2>
               </div>
               <div className="mt-4 grid gap-3">
-                {data.todayEntries.map((entry) => (
+                {data.todayEntries.map((entry: TodayEntry) => (
                   <article key={entry.id} className="rounded-[20px] border border-stone-200 bg-stone-50/80 p-4">
                     <div className="flex flex-col gap-2 sm:flex-row sm:items-start sm:justify-between">
                       <div>

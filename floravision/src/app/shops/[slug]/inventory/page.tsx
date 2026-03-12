@@ -13,6 +13,10 @@ type PageProps = {
   }>;
 };
 
+type ShopInventoryData = NonNullable<Awaited<ReturnType<typeof getShopInventory>>>;
+type InventoryItem = ShopInventoryData["shop"]["inventoryItems"][number];
+type InventoryMovement = ShopInventoryData["movements"][number];
+
 function formatMovementType(type: string) {
   return type.replaceAll("_", " ").toLowerCase();
 }
@@ -85,7 +89,7 @@ export default async function ShopInventoryPage({ params }: PageProps) {
                 <label className="grid gap-2 text-sm text-stone-700">
                   Inventory item
                   <select name="itemId" className="rounded-2xl border border-stone-200 bg-stone-50 px-4 py-3">
-                    {data.shop.inventoryItems.map((item) => (
+                    {data.shop.inventoryItems.map((item: InventoryItem) => (
                       <option key={item.id} value={item.id}>
                         {item.color ? `${item.color} ` : ""}
                         {item.name} ({item.quantityOnHand} on hand)
@@ -135,7 +139,7 @@ export default async function ShopInventoryPage({ params }: PageProps) {
                 <label className="grid gap-2 text-sm text-amber-950">
                   Inventory item
                   <select name="itemId" className="rounded-2xl border border-amber-200 bg-white px-4 py-3 text-stone-700">
-                    {data.shop.inventoryItems.map((item) => (
+                    {data.shop.inventoryItems.map((item: InventoryItem) => (
                       <option key={item.id} value={item.id}>
                         {item.color ? `${item.color} ` : ""}
                         {item.name} ({item.quantityOnHand} on hand)
@@ -182,7 +186,7 @@ export default async function ShopInventoryPage({ params }: PageProps) {
                 <h2 className="font-serif text-3xl text-stone-950">Current cooler stock</h2>
               </div>
               <div className="mt-4 grid gap-3">
-                {data.shop.inventoryItems.map((item) => (
+                {data.shop.inventoryItems.map((item: InventoryItem) => (
                   <article key={item.id} className="rounded-[20px] border border-stone-200 bg-stone-50/80 p-4">
                     <div className="flex flex-col gap-2 sm:flex-row sm:items-start sm:justify-between">
                       <div>
@@ -211,7 +215,7 @@ export default async function ShopInventoryPage({ params }: PageProps) {
                 <h2 className="font-serif text-3xl text-stone-950">Inventory ledger</h2>
               </div>
               <div className="mt-4 grid gap-3">
-                {data.movements.map((movement) => (
+                {data.movements.map((movement: InventoryMovement) => (
                   <article key={movement.id} className="rounded-[20px] border border-stone-200 bg-stone-50/80 p-4">
                     <div className="flex flex-col gap-2 sm:flex-row sm:items-start sm:justify-between">
                       <div>

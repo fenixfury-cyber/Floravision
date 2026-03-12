@@ -20,6 +20,11 @@ type PageProps = {
   }>;
 };
 
+type ShopOrdersData = NonNullable<Awaited<ReturnType<typeof getShopOrders>>>;
+type ShopOrder = ShopOrdersData["orders"][number];
+type ShopOrderItem = ShopOrder["items"][number];
+type ShopStaffMember = ShopOrdersData["shop"]["staffMembers"][number];
+
 const statusOptions: Array<{ label: string; value: OrderStatus | "" }> = [
   { label: "All statuses", value: "" },
   { label: "Confirmed", value: "CONFIRMED" },
@@ -146,7 +151,7 @@ export default async function ShopOrdersPage({ params, searchParams }: PageProps
                 defaultValue={filters.status ?? ""}
                 className="rounded-2xl border border-stone-200 bg-stone-50 px-4 py-3"
               >
-                {statusOptions.map((option) => (
+                {statusOptions.map((option: (typeof statusOptions)[number]) => (
                   <option key={option.label} value={option.value}>
                     {option.label}
                   </option>
@@ -161,7 +166,7 @@ export default async function ShopOrdersPage({ params, searchParams }: PageProps
                 defaultValue={filters.fulfillmentType ?? ""}
                 className="rounded-2xl border border-stone-200 bg-stone-50 px-4 py-3"
               >
-                {fulfillmentOptions.map((option) => (
+                {fulfillmentOptions.map((option: (typeof fulfillmentOptions)[number]) => (
                   <option key={option.label} value={option.value}>
                     {option.label}
                   </option>
@@ -177,7 +182,7 @@ export default async function ShopOrdersPage({ params, searchParams }: PageProps
                 className="rounded-2xl border border-stone-200 bg-stone-50 px-4 py-3"
               >
                 <option value="">All designers</option>
-                {data.shop.staffMembers.map((staffMember) => (
+                {data.shop.staffMembers.map((staffMember: ShopStaffMember) => (
                   <option key={staffMember.id} value={staffMember.id}>
                     {staffMember.displayName}
                   </option>
@@ -200,7 +205,7 @@ export default async function ShopOrdersPage({ params, searchParams }: PageProps
         </section>
 
         <section className="mt-6 grid gap-4">
-          {data.orders.map((order) => (
+          {data.orders.map((order: ShopOrder) => (
             <article
               key={order.id}
               className="rounded-[24px] border border-stone-200/70 bg-white/80 p-5 shadow-[0_18px_45px_rgba(90,67,49,0.08)]"
@@ -228,7 +233,7 @@ export default async function ShopOrdersPage({ params, searchParams }: PageProps
                     Designer: {order.assignedDesigner?.displayName ?? "Unassigned"} • Due {formatTime(order.dueAt)}
                   </p>
                   <div className="mt-3 flex flex-wrap gap-2">
-                    {order.items.map((item) => (
+                    {order.items.map((item: ShopOrderItem) => (
                       <span
                         key={item.id}
                         className="rounded-full border border-stone-200 bg-stone-50 px-3 py-1 text-xs text-stone-700"
@@ -280,7 +285,7 @@ export default async function ShopOrdersPage({ params, searchParams }: PageProps
                           defaultValue={order.assignedDesigner?.id ?? data.shop.staffMembers[0]?.id}
                           className="rounded-xl border border-stone-200 bg-white px-3 py-2 text-sm normal-case tracking-normal text-stone-700"
                         >
-                          {data.shop.staffMembers.map((staffMember) => (
+                          {data.shop.staffMembers.map((staffMember: ShopStaffMember) => (
                             <option key={staffMember.id} value={staffMember.id}>
                               {staffMember.displayName}
                             </option>

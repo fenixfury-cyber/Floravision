@@ -21,6 +21,11 @@ type PageProps = {
   }>;
 };
 
+type OrderDetail = NonNullable<Awaited<ReturnType<typeof getOrderDetail>>>;
+type AssignableStaffMember = OrderDetail["shop"]["staffMembers"][number];
+type OrderItem = OrderDetail["items"][number];
+type CustomerPhoto = OrderDetail["customer"]["photos"][number];
+
 function formatMoney(cents: number | null | undefined) {
   return new Intl.NumberFormat("en-US", {
     style: "currency",
@@ -88,7 +93,7 @@ export default async function OrderDetailPage({ params }: PageProps) {
   const role = membership?.role;
   const showOrderOps = canManageOrders(access.user.platformRole, role);
   const showDeliveryOps = canHandleDeliveries(access.user.platformRole, role);
-  const assignableStaff = order.shop.staffMembers.filter((staffMember) =>
+  const assignableStaff = order.shop.staffMembers.filter((staffMember: AssignableStaffMember) =>
     ["OWNER", "MANAGER", "DESIGNER"].includes(staffMember.role),
   );
 
@@ -180,7 +185,7 @@ export default async function OrderDetailPage({ params }: PageProps) {
                       defaultValue={order.assignedDesigner?.id ?? assignableStaff[0]?.id}
                       className="mt-3 w-full rounded-2xl border border-stone-200 bg-white px-4 py-3 text-sm text-stone-700"
                     >
-                      {assignableStaff.map((staffMember) => (
+                      {assignableStaff.map((staffMember: AssignableStaffMember) => (
                         <option key={staffMember.id} value={staffMember.id}>
                           {staffMember.displayName} ({staffMember.role.toLowerCase()})
                         </option>
@@ -205,7 +210,7 @@ export default async function OrderDetailPage({ params }: PageProps) {
               </div>
               {showOrderOps ? (
                 <div className="mt-4 grid gap-3">
-                  {order.items.map((item) => {
+                  {order.items.map((item: OrderItem) => {
                     const checked = checkedItemIds.has(item.id);
 
                     return (
@@ -256,7 +261,7 @@ export default async function OrderDetailPage({ params }: PageProps) {
               </div>
 
               <div className="mt-4 grid gap-3 md:grid-cols-3">
-                {order.customer.photos.map((photo) => (
+                {order.customer.photos.map((photo: CustomerPhoto) => (
                   <PhotoCard key={photo.id} photo={photo} />
                 ))}
               </div>
@@ -337,7 +342,7 @@ export default async function OrderDetailPage({ params }: PageProps) {
                     <div className="rounded-[20px] border border-amber-300 bg-white/70 p-4">
                       <p className="font-semibold">Missing scans:</p>
                       <ul className="mt-2 list-disc space-y-1 pl-5">
-                        {missingItems.map((item) => (
+                        {missingItems.map((item: OrderItem) => (
                           <li key={item.id}>{item.description}</li>
                         ))}
                       </ul>
