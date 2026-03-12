@@ -8,6 +8,31 @@ import { getHomePageData, listAccessibleShops } from "@/lib/shop-data";
 
 export const dynamic = "force-dynamic";
 
+type AccessibleShop = {
+  id: string;
+  slug: string;
+  name: string;
+  _count: {
+    orders: number;
+    staffMembers: number;
+    customers: number;
+  };
+};
+
+type HomeOrder = {
+  id: string;
+  href: string;
+  status: DashboardOrderStatus;
+  occasion: string;
+  customer: string;
+  note: string;
+};
+
+type CustomerPhotoSummary = {
+  title: string;
+  detail: string;
+};
+
 function statusClassName(status: DashboardOrderStatus) {
   switch (status) {
     case "Ready for pickup":
@@ -99,7 +124,7 @@ export default async function Home() {
               <span className="ml-3 text-stone-700">Try: {data.quickSearch[0]}</span>
             </div>
             <div className="mt-4 flex flex-wrap gap-2">
-              {data.quickSearch.map((item) => (
+              {data.quickSearch.map((item: string) => (
                 <span
                   key={item}
                   className="rounded-full border border-stone-200 bg-white px-3 py-1 text-xs text-stone-600"
@@ -197,7 +222,7 @@ export default async function Home() {
                 </div>
 
                 <div className="mt-4 grid gap-3">
-                  {visibleShops.map((shop) => (
+                  {visibleShops.map((shop: AccessibleShop) => (
                     <Link
                       key={shop.id}
                       href={`/shops/${shop.slug}`}
@@ -226,7 +251,7 @@ export default async function Home() {
                 </div>
 
                 <div className="mt-4 space-y-4">
-                  {data.orders.map((order) => (
+                  {data.orders.map((order: HomeOrder) => (
                     <Link
                       key={order.id}
                       href={order.href}
@@ -255,7 +280,7 @@ export default async function Home() {
                 </div>
 
                 <div className="mt-4 grid gap-3">
-                  {data.customerPhotos.map((photo) => (
+                  {data.customerPhotos.map((photo: CustomerPhotoSummary) => (
                     <article
                       key={photo.title}
                       className="rounded-[20px] border border-stone-200 bg-gradient-to-br from-rose-200 via-rose-100 to-stone-50 p-4"
