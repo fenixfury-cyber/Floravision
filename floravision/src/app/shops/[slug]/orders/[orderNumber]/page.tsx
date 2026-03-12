@@ -89,7 +89,7 @@ export default async function OrderDetailPage({ params }: PageProps) {
   }
 
   const checkedItemIds = new Set(order.delivery?.checks.map((check: DeliveryCheck) => check.orderItemId) ?? []);
-  const missingItems = order.items.filter((item) => item.requiresScan && !checkedItemIds.has(item.id));
+  const missingItems = order.items.filter((item: OrderItem) => item.requiresScan && !checkedItemIds.has(item.id));
   const membership = getMembershipForShop(access, slug);
   const role = membership?.role;
   const showOrderOps = canManageOrders(access.user.platformRole, role);
